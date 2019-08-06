@@ -1,56 +1,40 @@
-$filrewall_selinux = <<-SCRIPT
-echo "Disable Firewall"
-systemctl stop firewalld && systemctl disable firewalld
-echo "Disable Selinux"
-setenforce 0
-sed -i s/SELINUX=enforcing/SELINUX=disabled/g /etc/selinux/config
-SCRIPT
+VAGRANTFILE_API_VERSION = "2"
 
-ip_node1 = "192.168.33.31";
-ip_node2 = "192.168.33.32";
-ip_node3 = "192.168.33.33";
+disk = './secondDisk.vdi' 
+BOX_NAME="test"
 
-Vagrant.configure("2") do |config|
 
-    config.vm.define "node1" do |node1|
-      node1.vm.network "private_network", ip: ip_node1
-      node1.vm.hostname = "node1"
-      node1.vm.define "node1"
-      node1.vm.box_download_insecure = true
-      node1.vm.box = "centos/7"
-      node1.vm.provider "virtualbox" do |vb|
-        vb.memory = "2048"
-        file_to_disk = './tmp/large_disk.vdi'
-        unless File.exist?(file_to_disk)
-          vb.customize ['createhd', '--filename', file_to_disk, '--size', 500] # size is in MB
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+    config.vm.define :master do |master|
+        master.vm.box = "centos65"
+        master.vm.box_url = "https://github.com/2creatives/vagrant-centos/releases/download/v6.5.1/centos65-x86_64-20131205.box"
+        master.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--memory", "2196"]
+          v.name = BOX_NAME
         end
-        vb.customize ['storageattach', :id, '--storagectl', 'IDE', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', file_to_disk]      
-      end
-      node1.vm.provision "shell", inline: $filrewall_selinux
+        master.vm.network :private_network, ip: "192.168.33.10"
+        master.vm.hostname = BOX_NAME
     end
-  
-    # config.vm.define "node2" do |node2|
-    #   node2.vm.network "private_network", ip: ip_node2
-    #   node2.vm.hostname = "node2"
-    #   node2.vm.define "node2"
-    #   node2.vm.box_download_insecure = true
-    #   node2.vm.box = "centos/7"
-    #   node2.vm.provider "virtualbox" do |vb|
-    #     vb.memory = "2048"
-    #   end
-    #   node2.vm.provision "shell", inline: $filrewall_selinux
-    # end
 
-    # config.vm.define "node3" do |node3|
-    #   node3.vm.network "private_network", ip: ip_node3
-    #   node3.vm.hostname = "node3"
-    #   node3.vm.define "node3"
-    #   node3.vm.box_download_insecure = true
-    #   node3.vm.box = "centos/7"
-    #   node3.vm.provider "virtualbox" do |vb|
-    #     vb.memory = "2048"
-    #   end
-    #   node3.vm.provision "shell", inline: $filrewall_selinux
-    # end
+    config.vm.synced_folder(".", "/vagrant",
+        :owner => "vagrant",
+        :group => "vagrant",
+        :mount_options => ['dmode=777','fmode=777']
+    )
 
+    # create the second disk and attach it
+    config.vm.provider "virtualbox" do |vb|
+        unless File.exist?(disk)
+            vb.customize ['createhd', '--filename', disk, '--variant', 'Fixed', '--size', 1 * 1024]
+        end
+
+        vb.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', disk]
+    end
+
+    # NEW - invoke script which  partitions the new disk (/dev/sdb) 
+    # and create mount directives in /etc/fstab
+    #config.vm.provision :shell, path: "bootstrap.sh"  
+    config.vm.provision "shell" do |shell|
+        shell.inline = "sudo /vagrant/bootstrap.sh"  
+    end
 end

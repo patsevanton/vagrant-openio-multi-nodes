@@ -1,0 +1,68 @@
+Vagrant.configure(2) do |config|
+
+  config.vm.box = "ubuntu/trusty64"
+  config.vm.box_check_update = false
+  config.vm.network "private_network", ip: "192.168.33.9"
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = false
+    vb.memory = "1024"
+    vb.name = "try_disk"
+
+    file_to_disk = File.realpath( "." ).to_s + "/disk.vdi"
+
+    if ARGV[0] == "up" && ! File.exist?(file_to_disk)
+       vb.customize [
+            'createhd',
+            '--filename', file_to_disk,
+            '--format', 'VDI',
+            '--size', 30 * 1024 # 30 GB
+            ]
+       vb.customize [
+            'storageattach', :id,
+            '--storagectl', 'IDE', # The name may vary
+            '--port', 1, '--device', 0,
+            '--type', 'hdd', '--medium',
+            file_to_disk
+            ]
+    end
+  end
+
+  # Tow partition in one disk
+  config.vm.provision "shell", inline: <<-SHELL
+set -e
+set -x
+
+if [ -f /etc/provision_env_disk_added_date ]
+then
+   echo "Provision runtime already done."
+   exit 0
+fi
+
+
+sudo fdisk -u /dev/sdb <<EOF
+n
+p
+1
+
++500M
+n
+p
+2
+
+
+w
+EOF
+
+mkfs.ext4 /dev/sdb1
+mkfs.ext4 /dev/sdb2
+mkdir -p /{data,extra}
+mount -t ext4 /dev/sdb1 /data
+mount -t ext4 /dev/sdb2 /extra
+
+date > /etc/provision_env_disk_added_date
+  SHELL
+
+  config.vm.provision "shell", inline: <<-SHELL
+    echo Well done
+  SHELL
+end
