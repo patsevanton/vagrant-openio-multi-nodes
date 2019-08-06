@@ -18,6 +18,26 @@ else
 fi
 SCRIPT
 
+$sdc1 = <<-SCRIPT
+parted /dev/sdc mklabel msdos
+parted /dev/sdc mkpart primary 512 100%
+mkfs.xfs /dev/sdc1
+mkdir /mnt/sdc1
+if grep -Fxq "sdc1" /etc/fstab
+then
+  echo 'sdc1 exist in fstab'
+else
+  echo `blkid /dev/sdc1 | awk '{print$2}' | sed -e 's/"//g'` /mnt/sdc1   xfs   noatime,nobarrier   0   0 >> /etc/fstab
+fi
+if mount | grep /mnt/sdc1 > /dev/null; then
+  echo "/dev/sdc1 mounted /mnt/sdc1"
+  umount /mnt/sdc1
+  mount /mnt/sdc1
+else
+  mount /mnt/sdc1
+fi
+SCRIPT
+
 Node1Disk1 = "./tmp/Node1Disk1.vdi";
 Node1Disk2 = "./tmp/Node1Disk2.vdi";
 
@@ -45,6 +65,7 @@ Vagrant.configure("2") do |config|
       end
     end
     node1.vm.provision "shell", inline: $sdb1
+    node1.vm.provision "shell", inline: $sdc1
   end
 
 end
