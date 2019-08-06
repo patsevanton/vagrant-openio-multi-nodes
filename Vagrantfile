@@ -31,10 +31,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', disk]
     end
 
-    # NEW - invoke script which  partitions the new disk (/dev/sdb) 
-    # and create mount directives in /etc/fstab
-    #config.vm.provision :shell, path: "bootstrap.sh" 
-    config.vm.provision "file", source: "bootstrap.sh", destination: "/home/vagrant/bootstrap.sh" 
+    config.vm.provision :shell, path: "bootstrap.sh" 
+    # config.vm.provision "file", source: "bootstrap.sh", destination: "/home/vagrant/bootstrap.sh" 
     config.vm.provision "shell" do |shell|
         shell.inline = "sudo /vagrant/bootstrap.sh"  
     end
