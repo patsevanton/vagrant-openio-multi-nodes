@@ -40,6 +40,8 @@ SCRIPT
 
 node1disk1 = "./tmp/node1disk1.vdi";
 node1disk2 = "./tmp/node1disk2.vdi";
+node2disk1 = "./tmp/node2disk1.vdi";
+node2disk2 = "./tmp/node2disk2.vdi";
 
 ip_node1 = "192.168.33.31";
 ip_node2 = "192.168.33.32";
@@ -66,6 +68,27 @@ Vagrant.configure("2") do |config|
     end
     node1.vm.provision "shell", inline: $sdb1
     node1.vm.provision "shell", inline: $sdc1
+  end
+
+  config.vm.define "node2" do |node2|
+    node2.vm.network "private_network", ip: ip_node2
+    node2.vm.hostname = "node2"
+    node2.vm.define "node2"
+    node2.vm.box_download_insecure = true
+    node2.vm.box = "centos/7"
+    node2.vm.provider "virtualbox" do |vb|
+      vb.memory = "2048"
+      if not File.exists?(node2disk1)
+        vb.customize ['createhd', '--filename', node2disk1, '--variant', 'Fixed', '--size', 1 * 1024]
+        vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', node2disk1]
+      end
+      if not File.exists?(node2disk2)
+        vb.customize ['createhd', '--filename', node2disk2, '--variant', 'Fixed', '--size', 1 * 1024]
+        vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 1, '--device', 1, '--type', 'hdd', '--medium', node2disk2]
+      end
+    end
+    node2.vm.provision "shell", inline: $sdb1
+    node2.vm.provision "shell", inline: $sdc1
   end
 
 end
