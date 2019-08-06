@@ -6,8 +6,8 @@ BOX_NAME="test"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.define :master do |master|
-        master.vm.box = "centos65"
-        master.vm.box_url = "https://github.com/2creatives/vagrant-centos/releases/download/v6.5.1/centos65-x86_64-20131205.box"
+        master.vm.box = "centos/7"
+        # master.vm.box_url = "https://github.com/2creatives/vagrant-centos/releases/download/v6.5.1/centos65-x86_64-20131205.box"
         master.vm.provider "virtualbox" do |v|
           v.customize ["modifyvm", :id, "--memory", "2196"]
           v.name = BOX_NAME
@@ -28,12 +28,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             vb.customize ['createhd', '--filename', disk, '--variant', 'Fixed', '--size', 1 * 1024]
         end
 
-        vb.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', disk]
+        vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', disk]
     end
 
     # NEW - invoke script which  partitions the new disk (/dev/sdb) 
     # and create mount directives in /etc/fstab
-    #config.vm.provision :shell, path: "bootstrap.sh"  
+    #config.vm.provision :shell, path: "bootstrap.sh" 
+    config.vm.provision "file", source: "bootstrap.sh", destination: "/home/vagrant/bootstrap.sh" 
     config.vm.provision "shell" do |shell|
         shell.inline = "sudo /vagrant/bootstrap.sh"  
     end
