@@ -1,6 +1,6 @@
 $sdb1 = <<-SCRIPT
 parted /dev/sdb mklabel msdos
-parted /dev/sdb mkpart primary 512 100%
+parted /dev/sdb mkpart primary 0% 100%
 mkfs.xfs /dev/sdb1
 mkdir /mnt/sdb1
 if grep -Fxq "sdb1" /etc/fstab
@@ -20,7 +20,7 @@ SCRIPT
 
 $sdc1 = <<-SCRIPT
 parted /dev/sdc mklabel msdos
-parted /dev/sdc mkpart primary 512 100%
+parted /dev/sdc mkpart primary 0% 100%
 mkfs.xfs /dev/sdc1
 mkdir /mnt/sdc1
 if grep -Fxq "sdc1" /etc/fstab
