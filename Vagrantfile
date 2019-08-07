@@ -79,7 +79,6 @@ Vagrant.configure("2") do |config|
     node1.vm.box = "centos/7"
     node1.vm.provider "virtualbox" do |vb|
       vb.memory = "2048"
-      vb.gui = true
       if not File.exists?(node1disk1)
         vb.customize ['createhd', '--filename', node1disk1, '--variant', 'Fixed', '--size', 1 * 1024]
         vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 0, '--device', 1, '--type', 'hdd', '--medium', node1disk1]
