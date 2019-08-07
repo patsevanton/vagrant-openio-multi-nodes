@@ -79,17 +79,18 @@ Vagrant.configure("2") do |config|
     node1.vm.box = "centos/7"
     node1.vm.provider "virtualbox" do |vb|
       vb.memory = "2048"
+      vb.gui = true
       if not File.exists?(node1disk1)
         vb.customize ['createhd', '--filename', node1disk1, '--variant', 'Fixed', '--size', 1 * 1024]
-        vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 0, '--device', 0, '--type', 'hdd', '--medium', node1disk1]
+        vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 0, '--device', 1, '--type', 'hdd', '--medium', node1disk1]
       end
       if not File.exists?(node1disk2)
         vb.customize ['createhd', '--filename', node1disk2, '--variant', 'Fixed', '--size', 1 * 1024]
-        vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 0, '--device', 1, '--type', 'hdd', '--medium', node1disk2]
+        vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', node1disk2]
       end
       if not File.exists?(node1disk3)
         vb.customize ['createhd', '--filename', node1disk3, '--variant', 'Fixed', '--size', 1 * 1024]
-        vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', node1disk3]
+        vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 1, '--device', 1, '--type', 'hdd', '--medium', node1disk3]
       end
     end
     node1.vm.provision "shell", inline: $sdb1
@@ -107,15 +108,15 @@ Vagrant.configure("2") do |config|
   #     vb.memory = "2048"
   #     if not File.exists?(node2disk1)
   #       vb.customize ['createhd', '--filename', node2disk1, '--variant', 'Fixed', '--size', 1 * 1024]
-  #       vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 0, '--device', 0, '--type', 'hdd', '--medium', node2disk1]
+  #       vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 0, '--device', 1, '--type', 'hdd', '--medium', node2disk1]
   #     end
   #     if not File.exists?(node2disk2)
   #       vb.customize ['createhd', '--filename', node2disk2, '--variant', 'Fixed', '--size', 1 * 1024]
-  #       vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 0, '--device', 1, '--type', 'hdd', '--medium', node2disk2]
+  #       vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', node2disk2]
   #     end
   #     if not File.exists?(node2disk3)
   #       vb.customize ['createhd', '--filename', node2disk3, '--variant', 'Fixed', '--size', 1 * 1024]
-  #       vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', node2disk3]
+  #       vb.customize ['storageattach', :id,  '--storagectl', 'IDE', '--port', 1, '--device', 1, '--type', 'hdd', '--medium', node2disk3]
   #     end
   #   end
   #   node2.vm.provision "shell", inline: $sdb1
