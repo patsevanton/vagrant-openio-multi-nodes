@@ -1,3 +1,11 @@
+$filrewall_selinux = <<-SCRIPT
+echo "Disable Firewall"
+systemctl stop firewalld && systemctl disable firewalld
+echo "Disable Selinux"
+setenforce 0
+sed -i s/SELINUX=enforcing/SELINUX=disabled/g /etc/selinux/config
+SCRIPT
+
 $sdb1 = <<-SCRIPT
 parted /dev/sdb mklabel msdos
 parted /dev/sdb mkpart primary 0% 100%
@@ -98,6 +106,7 @@ Vagrant.configure("2") do |config|
     node1.vm.provision "shell", inline: $sdb1
     node1.vm.provision "shell", inline: $sdc1
     node1.vm.provision "shell", inline: $sdd1
+    node1.vm.provision "shell", inline: $filrewall_selinux
   end
 
   config.vm.define "node2" do |node2|
@@ -124,6 +133,7 @@ Vagrant.configure("2") do |config|
     node2.vm.provision "shell", inline: $sdb1
     node2.vm.provision "shell", inline: $sdc1
     node2.vm.provision "shell", inline: $sdd1
+    node1.vm.provision "shell", inline: $filrewall_selinux
   end
 
   config.vm.define "node3" do |node3|
@@ -150,6 +160,7 @@ Vagrant.configure("2") do |config|
     node3.vm.provision "shell", inline: $sdb1
     node3.vm.provision "shell", inline: $sdc1
     node3.vm.provision "shell", inline: $sdd1
+    node1.vm.provision "shell", inline: $filrewall_selinux
   end
 
 end
