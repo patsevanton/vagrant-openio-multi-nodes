@@ -11,6 +11,7 @@ sed -i '/ansible_host: IP_ADDRESS_OF_NODE3/a \      ansible_ssh_private_key_file
 sed -i 's/IP_ADDRESS_OF_NODE1/"192.168.33.31"/g' inventory.yml
 sed -i 's/IP_ADDRESS_OF_NODE2/"192.168.33.32"/g' inventory.yml
 sed -i 's/IP_ADDRESS_OF_NODE3/"192.168.33.33"/g' inventory.yml
+sed -i 's/ansible_user: root/ansible_user: vagrant/g' inventory.yml
 ansible all -i inventory.yml -bv -m ping
 ./requirements_install.sh
 ./deploy_and_bootstrap.sh
