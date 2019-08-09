@@ -133,7 +133,7 @@ Vagrant.configure("2") do |config|
     node2.vm.provision "shell", inline: $sdb1
     node2.vm.provision "shell", inline: $sdc1
     node2.vm.provision "shell", inline: $sdd1
-    node1.vm.provision "shell", inline: $filrewall_selinux
+    node2.vm.provision "shell", inline: $filrewall_selinux
   end
 
   config.vm.define "node3" do |node3|
@@ -160,7 +160,7 @@ Vagrant.configure("2") do |config|
     node3.vm.provision "shell", inline: $sdb1
     node3.vm.provision "shell", inline: $sdc1
     node3.vm.provision "shell", inline: $sdd1
-    node1.vm.provision "shell", inline: $filrewall_selinux
+    node3.vm.provision "shell", inline: $filrewall_selinux
   end
 
 end
