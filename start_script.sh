@@ -14,4 +14,4 @@ sed -i 's/IP_ADDRESS_OF_NODE3/"192.168.33.33"/g' inventory.yml
 sed -i 's/ansible_user: root/ansible_user: vagrant/g' inventory.yml
 ansible all -i inventory.yml -bv -m ping
 ./requirements_install.sh
-#./deploy_and_bootstrap.sh
+./deploy_and_bootstrap.sh
