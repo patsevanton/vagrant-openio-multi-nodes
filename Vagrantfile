@@ -89,6 +89,7 @@ Vagrant.configure("2") do |config|
     node1.vm.box_download_insecure = true
     node1.vm.box = "ubuntu/bionic64"
     node1.vm.provider "virtualbox" do |vb|
+      vb.gui = true
       vb.memory = "2048"
       if not File.exists?(node1disk1)
         vb.customize ['createhd', '--filename', node1disk1, '--variant', 'Fixed', '--size', 1 * 1024]
@@ -116,6 +117,7 @@ Vagrant.configure("2") do |config|
     node2.vm.box_download_insecure = true
     node2.vm.box = "ubuntu/bionic64"
     node2.vm.provider "virtualbox" do |vb|
+      vb.gui = true
       vb.memory = "2048"
       if not File.exists?(node2disk1)
         vb.customize ['createhd', '--filename', node2disk1, '--variant', 'Fixed', '--size', 1 * 1024]
@@ -143,6 +145,7 @@ Vagrant.configure("2") do |config|
     node3.vm.box_download_insecure = true
     node3.vm.box = "ubuntu/bionic64"
     node3.vm.provider "virtualbox" do |vb|
+      vb.gui = true
       vb.memory = "2048"
       if not File.exists?(node3disk1)
         vb.customize ['createhd', '--filename', node3disk1, '--variant', 'Fixed', '--size', 1 * 1024]
