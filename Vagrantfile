@@ -87,7 +87,7 @@ Vagrant.configure("2") do |config|
     node1.vm.hostname = "node1"
     node1.vm.define "node1"
     node1.vm.box_download_insecure = true
-    node1.vm.box = "ubuntu/bionic64"
+    node1.vm.box = "centos/7"
     node1.vm.provider "virtualbox" do |vb|
       vb.memory = "2048"
       if not File.exists?(node1disk1)
@@ -114,7 +114,7 @@ Vagrant.configure("2") do |config|
     node2.vm.hostname = "node2"
     node2.vm.define "node2"
     node2.vm.box_download_insecure = true
-    node2.vm.box = "ubuntu/bionic64"
+    node2.vm.box = "centos/7"
     node2.vm.provider "virtualbox" do |vb|
       vb.memory = "2048"
       if not File.exists?(node2disk1)
@@ -141,7 +141,7 @@ Vagrant.configure("2") do |config|
     node3.vm.hostname = "node3"
     node3.vm.define "node3"
     node3.vm.box_download_insecure = true
-    node3.vm.box = "ubuntu/bionic64"
+    node3.vm.box = "centos/7"
     node3.vm.provider "virtualbox" do |vb|
       vb.memory = "2048"
       if not File.exists?(node3disk1)
